@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 import imaplib
 import requests
+import MySQLdb
 # print(raw_email)
 # print(soup.get_text())
 
@@ -9,6 +10,14 @@ import requests
 #    a = soup.prettify(encoding=None)
 #    print(soup.prettify(encoding=None))
 #    file.write(str(raw_email))
+db = MySQLdb.connect(
+    host="localhost",
+    user="root",
+    passwd="",
+    db="nahns_sourcebans"
+    )
+cur = db.cursor()
+
 
 def main():
     mail = imaplib.IMAP4_SSL('imap.gmail.com')
@@ -32,6 +41,16 @@ def main():
         _, data = mail.fetch(id, "RFC822")
         findSteamName(data[0][1])
 
+    sqlData = sqlGetUser(steamid) # I need to do something with getMoreInfo before I can use this
+    for row in sqlData:
+            if row[3] == 1 and row[4] == 1: # Unban and vip
+                sqlUnban(alias, steamid)
+                sqlVip(alias, steamid)
+            elif row[3] == 1: # If set for unban
+                sqlUnban(alias, steamid)
+            else:
+                sqlVip(alias, steamid)
+            
 
 def findSteamName(raw_email):
     searchString = 'yes' # this will be http://community.steam...
@@ -51,7 +70,24 @@ def getMoreInfo(steamUrl):
     # Might not use bs4 might use string lookups instead. 
     # Also not sure what to do with this info. 
 
+def sqlGetUser(steamid):
+    query = "SELECT * from nahns_store WHERE steamid='%s'" % (steamid)
+    cur.execute(query)
+
+    return cur.fetchall()
+
+def sqlVip(alias, steamid):
+    query = "INSERT INTO sb_admins (aid, user, authid, password, gid, email, validate, extraflags, immunity, srv_group, srv_flags, srv_password, lastvisit) VALUES ('99', '%s', '%s', '', '1', '', '', '', '0', 'VIP [HNS]', '', '', '0');" % (alias, authid)
+
+    cur.execute(query)
+
+def sqlUnban(alias, steamid):
+    query = "UPDATE sb_bans SET RemovedBy = '0', RemoveType = 'U', RemovedOn = UNIX_TIMESTAMP(), ureason = 'Unbanned at community.edan.pw/store/' WHERE authid = '%s' OR name = '%s'" % (authid, alias)
+
+    cur.execute(query)
+
 if __name__ == '__main__':
     main()
     # TODO: from username, decide how we want to add to db. 
     # Possibly run as cron job. 
+db.close()
