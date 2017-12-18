@@ -44,12 +44,15 @@ def main():
     sqlData = sqlGetUser(steamid) # I need to do something with getMoreInfo before I can use this
     for row in sqlData:
             if row[3] == 1 and row[4] == 1: # Unban and vip
-                sqlUnban(alias, steamid)
-                sqlVip(alias, steamid)
+                if USER PAID $10:
+                    sqlUnban(alias, steamid)
+                    sqlVip(alias, steamid)
             elif row[3] == 1: # If set for unban
-                sqlUnban(alias, steamid)
+                if USER PAID $5:
+                    sqlUnban(alias, steamid)
             else:
-                sqlVip(alias, steamid)
+                if USER PAID $5:
+                    sqlVip(alias, steamid)
             
 
 def findSteamName(raw_email):
