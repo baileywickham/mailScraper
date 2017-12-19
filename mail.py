@@ -40,28 +40,18 @@ def main():
         steamName = findSteamName(data[0][1], findCommunity)
         moneyPaid = findSteamName(data[0][1], findMoney)
 
-        # Either this or unbanfromserver(steamid,moneypaid)
-        if moneyPaid == '$5.00':
-            unbanFromServer(steamName)
-        elif moneyPaid == '$10.00':
-            pass  # this would be that vip thing
-        else:
-            textUs()
-
-    # ALEX: Can I abstract all of this into a method so it can be
-    # called from the above loop?
-    sqlData = sqlGetUser(steamid)  # I need to do something with getMoreInfo before I can use this
-    for row in sqlData:
-            if row[3] == 1 and row[4] == 1:  # Unban and vip
-                if USER PAID $10:
-                    sqlUnban(alias, steamid)
-                    sqlVip(alias, steamid)
-            elif row[3] == 1:  # If set for unban
-                if USER PAID $5:
-                    sqlUnban(alias, steamid)
-            else:
-                if USER PAID $5:
-                    sqlVip(alias, steamid)
+	steamid = getMoreInfo(steamName) # I'm not sure if steamName is alias or url
+	sqlData = sqlGetUser(steamid)  # I need to do something with getMoreInfo before I can use this
+    	for row in sqlData:
+        	if row[3] == 1 and row[4] == 1 and moneyPaid == '$10.00':  # Unban and vip
+        		sqlUnban(alias, steamid)
+	                sqlVip(alias, steamid)
+        	elif row[3] == 1 and moneyPaid == '$5.00':  # If set for unban
+                	sqlUnban(alias, steamid)
+	        elif row[4] == 1 and moneyPaid == '$5.00': # If set for vip
+        	        sqlVip(alias, steamid)
+		else:
+			# do logging here, i don't think texts are nessacary. Users will probably report the error before we can get to it anyway. Writing to a log file should be sufficent
 
 
 def findSteamName(raw_email, searchString):
@@ -80,7 +70,7 @@ def getMoreInfo(steamUrl):
     toScrape = str(r.text)
     start = toScrape.find('STEAM_0')
     new = toScrape[start:]
-    end = new.find()  # TODO, figure out how this ends.
+    end = new.find()  # TODO, figure out how this ends. BAILEY: It's worth noting these are of a length n, so it can't be hardcoded
     return new[:end]
 
     # Might not use bs4 might use string lookups instead.
@@ -109,14 +99,7 @@ def sqlUnban(alias, steamid):
 def unbanFromServer():
     pass
     # this is the main unban part, it should call the other unban functions.
-
-
-def textUs():
-    pass
-    # this method will text alex and i if something goes wrong.
-    # we will then try to troubleshoot.
-    # also build a log funcition to write to a log file.
-
+    # I'm not sure this is nessacary. sqlUnban will handle the unban entirely, unless you wanted to send an email or something
 
 if __name__ == '__main__':
     main()
