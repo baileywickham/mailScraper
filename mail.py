@@ -40,6 +40,7 @@ def main():
         steamName = findSteamName(data[0][1], findCommunity)
         moneyPaid = findSteamName(data[0][1], findMoney)
 
+        # Either this or unbanfromserver(steamid,moneypaid)
         if moneyPaid == '$5.00':
             unbanFromServer(steamName)
         elif moneyPaid == '$10.00':
@@ -47,7 +48,7 @@ def main():
         else:
             textUs()
 
-    # ALEX: Can I abstract all of this into a method so it can be 
+    # ALEX: Can I abstract all of this into a method so it can be
     # called from the above loop?
     sqlData = sqlGetUser(steamid)  # I need to do something with getMoreInfo before I can use this
     for row in sqlData:
@@ -77,6 +78,10 @@ def getMoreInfo(steamUrl):
     url = 'https://steamid.xyz/' + steamUrl
     r = requests.get(url)
     toScrape = str(r.text)
+    start = toScrape.find('STEAM_0')
+    new = toScrape[start:]
+    end = new.find()  # TODO, figure out how this ends.
+    return new[:end]
 
     # Might not use bs4 might use string lookups instead.
     # Also not sure what to do with this info.
@@ -115,6 +120,6 @@ def textUs():
 
 if __name__ == '__main__':
     main()
-    # TODO: from username, decide how we want to add to db. 
-    # Possibly run as cron job. 
+    # TODO: from username, decide how we want to add to db.
+    # Possibly run as cron job.
 db.close()
