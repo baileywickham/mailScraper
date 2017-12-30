@@ -40,18 +40,20 @@ def main():
         steamName = findSteamName(data[0][1], findCommunity)
         moneyPaid = findSteamName(data[0][1], findMoney)
 
-	steamid = getMoreInfo(steamName) # I'm not sure if steamName is alias or url
-	sqlData = sqlGetUser(steamid)  # I need to do something with getMoreInfo before I can use this
-    	for row in sqlData:
-        	if row[3] == 1 and row[4] == 1 and moneyPaid == '$10.00':  # Unban and vip
-        		sqlUnban(alias, steamid)
-	                sqlVip(alias, steamid)
-        	elif row[3] == 1 and moneyPaid == '$5.00':  # If set for unban
-                	sqlUnban(alias, steamid)
-	        elif row[4] == 1 and moneyPaid == '$5.00': # If set for vip
-        	        sqlVip(alias, steamid)
-		else:
-			# do logging here, i don't think texts are nessacary. Users will probably report the error before we can get to it anyway. Writing to a log file should be sufficent
+    steamid = getMoreInfo(steamName) # I'm not sure if steamName is alias orurl
+    sqlData = sqlGetUser(steamid)  # I need to do something with getMoreInfo before I can use this
+        for row in sqlData:
+            if row[3] == 1 and row[4] == 1 and moneyPaid == '$10.00':  # Unban and vip
+                sqlUnban(alias, steamid)
+                sqlVip(alias, steamid)
+            elif row[3] == 1 and moneyPaid == '$5.00':  # If set for unban
+                    sqlUnban(alias, steamid)
+            elif row[4] == 1 and moneyPaid == '$5.00':  # If set for vip
+                    sqlVip(alias, steamid)
+        else:
+            # do logging here, i don't think texts are nessacary.
+            # Users will probably report the error before we can get to it anyw
+            # Writing to a log file should be sufficent
 
 
 def findSteamName(raw_email, searchString):
@@ -70,7 +72,7 @@ def getMoreInfo(steamUrl):
     toScrape = str(r.text)
     start = toScrape.find('STEAM_0')
     new = toScrape[start:]
-    end = new.find()  # TODO, figure out how this ends. BAILEY: It's worth noting these are of a length n, so it can't be hardcoded
+    end = new.find(" ")  # should grab the end of the string... needs testing
     return new[:end]
 
     # Might not use bs4 might use string lookups instead.
