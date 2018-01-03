@@ -72,7 +72,7 @@ def getMoreInfo(steamUrl):
     toScrape = str(r.text)
     start = toScrape.find('STEAM_0')
     new = toScrape[start:]
-    end = new.find(" ")  # should grab the end of the string... needs testing
+    end = new.find("\"")  # should grab the end of the string... needs testing
     return new[:end]
 
     # Might not use bs4 might use string lookups instead.

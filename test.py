@@ -1,10 +1,15 @@
 import requests
-from bs4 import BeautifulSoup
-steamUrl = 'http://steamcommunity.com/id/beefyo/'
+
+steamUrl = 'http://steamcommunity.com/id/beef/'
 url = 'https://steamid.xyz/' + steamUrl
 
-r = requests.get(url)
-soup = BeautifulSoup(r.text, 'html.parser')
-
-#print(soup.prettify(encoding=None))
-print(soup.findAll(name=None, attrs={}, recursive=True, text=True, limit=None, kwargs=''))
+def getMoreInfo(steamUrl):
+    url = 'https://steamid.xyz/' + steamUrl
+    r = requests.get(url)
+    toScrape = str(r.text)
+    start = toScrape.find('STEAM_0')
+    new = toScrape[start:]
+    end = new.find("\"")  # should grab the end of the string... needs testing
+    return new[:end]
+print(getMoreInfo(steamUrl))
+print(url)
